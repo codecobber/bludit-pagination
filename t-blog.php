@@ -8,9 +8,11 @@ $nextPostPointer = 0;
 $currentPage = 1;
 $prevPage = 0;
 $nextPage = 2;
-$postsPerPage = 2;
 $postPointer = 0;
 
+
+//Set the number of items per page
+$postsPerPage = 3;
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -70,7 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                            
                             echo "
                             <div class='row text-left rowNo02'>
-                            ".$GLOBALS['postPointer']."
                                 <img src='".$children[$GLOBALS['postPointer']]->coverImage()."' alt='".$children[$GLOBALS['postPointer']]->title()."'>
                                 <div>
                                     <h2>".$children[$GLOBALS['postPointer']]->title()."</h2>
@@ -96,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         echo "<span id='currentBlogPage'>Current page: ". $GLOBALS['currentPage']."</span>";
 
                         //add the next button
-                       if(($GLOBALS['currentPage'] * 2) < (count($children))){
+                       if(($GLOBALS['currentPage'] * $postsPerPage) < (count($children))){
                             echo "<form method='POST' action='".htmlspecialchars($site->url())."blog'>
                             <input type='hidden' name='nextPage' value='".$GLOBALS['nextPage']."'>
                             <input type='hidden' name='nextPostPointer' value='".$GLOBALS['postPointer']."'>
