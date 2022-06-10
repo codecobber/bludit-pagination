@@ -3,44 +3,34 @@
 session_start();
 
 //Initial settings
-$postPointer = 0;
+$prevPostPointer = 0;
+$nextPostPointer = 0;
 $currentPage = 1;
 $prevPage = 0;
 $nextPage = 2;
+$postsPerPage = 2;
+$postPointer = 0;
 
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    
 
     if(isset($_POST['nextPage']) && !empty($_POST['nextPage'])){
         $GLOBALS['currentPage'] = htmlspecialchars($_POST['nextPage']);
-
-        if($GLOBALS['currentPage'] > 0){
-        $GLOBALS['prevPage'] = $GLOBALS['currentPage'] - 1;
-        }
-
         $GLOBALS['nextPage'] = $GLOBALS['currentPage'] + 1;
-        $GLOBALS['postPointer'] = htmlspecialchars($_POST['postPointer']);
-
+        $GLOBALS['postPointer'] = htmlspecialchars($_POST['nextPostPointer']);
+        $GLOBALS['prevPage'] = $GLOBALS['currentPage'] - 1;
+        $GLOBALS['prevPostPointer'] = $GLOBALS['postPointer'] - $postsPerPage;
     }
     else{
         if(isset($_POST['prevPage']) && !empty($_POST['prevPage'])){
-            $GLOBALS['currentPage'] = htmlspecialchars($_POST['nextPage']);
-           
-            if($GLOBALS['currentPage'] > 1){
-                $GLOBALS['prevPage'] = $GLOBALS['currentPage'] - 1;
-                $GLOBALS['postPointer'] = htmlspecialchars($_POST['postPointer']) -4;
-            }
-
-            $GLOBALS['nextPage'] = $GLOBALS['currentPage'] + 1;         
-            
+            $GLOBALS['currentPage'] = htmlspecialchars($_POST['prevPage']);
+            $GLOBALS['nextPage'] = $GLOBALS['currentPage'] + 1;
+            $GLOBALS['prevPage'] = $GLOBALS['currentPage'] -1; 
+            $GLOBALS['postPointer'] = htmlspecialchars($_POST['prevPostPointer']);
         }
     }   
-}else{
-    
-
 }
 
 
@@ -75,10 +65,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     //get array
                     $children = $page->children();
 
-                    $postCounter = 2;
-                    
                         //list each post
-                        for($postCount = 0; $postCount < $postCounter; $postCount++){
+                        for($postCount = 0; $postCount < $GLOBALS['postsPerPage']; $postCount++){
                            
                             echo "
                             <div class='row text-left rowNo02'>
@@ -101,8 +89,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                            
                             echo "<form method='POST' action='".htmlspecialchars($site->url())."blog'>
                             <input type='hidden' name='prevPage' value='".$GLOBALS['prevPage']."'>
-                            <input type='hidden' name='postPointer' value='".$GLOBALS['postPointer']."'>
-                            <input type='submit' value='Previous &laquo;'></form>";
+                            <input type='hidden' name='prevPostPointer' value='".$GLOBALS['prevPostPointer']."'>
+                            <input type='submit' value='&laquo; Previous'></form>";
                         }
                         
                         echo "<span id='currentBlogPage'>Current page: ". $GLOBALS['currentPage']."</span>";
@@ -111,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                        if(($GLOBALS['currentPage'] * 2) < (count($children))){
                             echo "<form method='POST' action='".htmlspecialchars($site->url())."blog'>
                             <input type='hidden' name='nextPage' value='".$GLOBALS['nextPage']."'>
-                            <input type='hidden' name='postPointer' value='".$GLOBALS['postPointer']."'>
+                            <input type='hidden' name='nextPostPointer' value='".$GLOBALS['postPointer']."'>
                             <input type='submit' value='Next page &raquo;'></form>";
                        }
                         
