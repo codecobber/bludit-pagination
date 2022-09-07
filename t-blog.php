@@ -2,6 +2,15 @@
 
 session_start();
 
+// A user-defined error handler function
+function myErrorHandler($errno, $errstr, $errfile, $errline) {
+    echo "<b>Custom error:</b> [$errno] $errstr<br>";
+    echo " Error on line $errline in $errfile<br>";
+}
+
+// Set user-defined error handler function
+set_error_handler("myErrorHandler");
+
 //Initial settings
 $prevPostPointer = 0;
 $nextPostPointer = 0;
@@ -69,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         //list each post
                         for($postCount = 0; $postCount < $GLOBALS['postsPerPage']; $postCount++){
-                           
+                           if(isset($children[$GLOBALS['postPointer']])){
                             echo "
                             <div class='row text-left rowNo02'>
                                 <img src='".$children[$GLOBALS['postPointer']]->coverImage()."' alt='".$children[$GLOBALS['postPointer']]->title()."'>
@@ -81,6 +90,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>";  
                          
                             $GLOBALS['postPointer']++;
+                           }
+                            
 
                         }
 
@@ -88,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         //add the previous button
                         if($GLOBALS['currentPage'] > 1){
                            
-                            echo "<form method='POST' action='".htmlspecialchars($site->url())."blog'>
+                            echo "<form method='POST' action='".htmlspecialchars($page->permalink())."'>
                             <input type='hidden' name='prevPage' value='".$GLOBALS['prevPage']."'>
                             <input type='hidden' name='prevPostPointer' value='".$GLOBALS['prevPostPointer']."'>
                             <input type='submit' value='&laquo; Previous'></form>";
@@ -98,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         //add the next button
                        if(($GLOBALS['currentPage'] * $postsPerPage) < (count($children))){
-                            echo "<form method='POST' action='".htmlspecialchars($site->url())."blog'>
+                            echo "<form method='POST' action='".htmlspecialchars($page->permalink())."'>
                             <input type='hidden' name='nextPage' value='".$GLOBALS['nextPage']."'>
                             <input type='hidden' name='nextPostPointer' value='".$GLOBALS['postPointer']."'>
                             <input type='submit' value='Next page &raquo;'></form>";
